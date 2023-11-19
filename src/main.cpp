@@ -4,13 +4,13 @@
 #define GLEW_STATIC
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-/*
+
 #include "Renderer.hpp"
 #include "Shader.hpp"
 #include "VertexArray.hpp"
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
-*/
+
 
 #include <iostream>
 #include <cmath>
@@ -30,22 +30,22 @@ void init (void){
         2, 3, 0
     };
     
-//    VertexBuffer myVBO(points, sizeof(points));
-//    unsigned int myVAO;
-//    
-//    glGenVertexArrays(1, &myVAO);
-//    glBindVertexArray(myVAO);
-//    
-//    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
-//    glEnableVertexAttribArray(0);
-//    
-//    IndexBuffer myIB(indices, 3);
+    VertexBuffer myVBO(points, sizeof(points));
+    unsigned int myVAO;
+    
+    glGenVertexArrays(1, &myVAO);
+    glBindVertexArray(myVAO);
+    
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 0, (void*)0);
+    glEnableVertexAttribArray(0);
+    
+    IndexBuffer myIB(indices, 3);
 }
 
-//void display (void){
+void display (void){
     
-//    glDrawArrays(GL_TRIANGLES, 0, 8);
-//}
+    glDrawArrays(GL_TRIANGLES, 0, 8);
+}
 
 int main (void){
     glfwInit();
@@ -61,11 +61,13 @@ int main (void){
     glfwMakeContextCurrent(window);
     glewInit();
     
-    //init();
+    init();
     
     while ( !glfwWindowShouldClose(window) ) {
         
-        display();
+        //display();
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
         
         glfwSwapBuffers(window);
         glfwPollEvents();

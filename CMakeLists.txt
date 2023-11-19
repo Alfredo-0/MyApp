@@ -2,7 +2,16 @@ cmake_minimum_required(VERSION 3.22.1)
 
 project(App0)
 
-add_executable(${PROJECT_NAME} main.cpp)
+set( project_sources
+    src/main.cpp
+    src/Renderer.cpp
+    src/IndexBuffer.cpp
+    src/Shader.cpp
+    src/VertexBuffer.cpp 
+    src/VertexArray.cpp
+)
+
+add_executable(${PROJECT_NAME} ${project_sources})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
