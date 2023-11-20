@@ -32,3 +32,5 @@ target_link_libraries(${PROJECT_NAME}
     glfw
     libglew_static
 )
+
+target_compile_definitions("${CMAKE_PROJECT_NAME}" PUBLIC RESOURCES_PATH="${CMAKE_CURRENT_SOURCE_DIR}/res/")
