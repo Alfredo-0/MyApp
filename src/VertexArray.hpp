@@ -1,13 +1,22 @@
 //
 //  VertexArray.hpp
-//  OpenGl_1
+//  OpenGl
 //
-//  Created by Sofia Pedraza on 11/11/23.
-//
+#pragma once
 
-#ifndef VertexArray_hpp
-#define VertexArray_hpp
+#include "VertexBuffer.hpp"
+#include "VertexLayout.hpp"
 
-#include <stdio.h>
+class VertexArray {
+private:
+    unsigned int m_RendererID;
+    
+public:
+    VertexArray();
+    ~VertexArray();
+    
+    void AddBuffer(const VertexBuffer& myVBO, const VertexLayout& layout);
 
-#endif /* VertexArray_hpp */
+    void Bind() const;
+    void Unbind() const;
+};

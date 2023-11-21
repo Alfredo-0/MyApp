@@ -1,9 +1,8 @@
+//
+//  VertexBuffer.hpp
+//  OpenGl
+//
 #pragma once
-
-#ifndef VertexBuffer_hpp
-#define VertexBuffer_hpp
-
-#endif /* VertexBuffer_hpp */
 
 class VertexBuffer {
 private:

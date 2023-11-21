@@ -1,11 +1,8 @@
+//
+//  IndexBuffer.hpp
+//  OpenGl
+//
 #pragma once
-
-#ifndef IndexBuffer_hpp
-#define IndexBuffer_hpp
-
-#include <stdio.h>
-
-#endif /* IndexBuffer_hpp */
 
 class IndexBuffer {
 private:

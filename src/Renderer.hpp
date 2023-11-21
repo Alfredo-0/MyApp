@@ -1,11 +1,13 @@
+//
+//  Renderer.hpp
+//  OpenGl
+//
 #pragma once
-#ifndef Renderer_hpp
-#define Renderer_hpp
 
-#include <GL/glew.h>
 #include <iostream>
-
-#endif /* Renderer_hpp */
+#include "VertexArray.hpp"
+#include "IndexBuffer.hpp"
+#include "Shader.hpp"
 
 #define ASSERT(x) if (!(x)) __builtin_trap();
 #define GLCall(x) GLCLearError();\
@@ -14,3 +16,9 @@
 
 void GLClearError();
 bool GLLogCall(const char* function, const char* file, int line);
+
+class Renderer{
+public:
+    void Draw(const VertexArray& VAO, const IndexBuffer& VBO, const Shader& Shader) const;
+    void Clear() const;
+};
