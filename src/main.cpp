@@ -21,7 +21,7 @@ const double pi = std::acos(-1);
 int main (void){
     glfwInit();
     
-    GLFWwindow* window = glfwCreateWindow(600, 600, "I'm a Star!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(600, 600, "I'm a Mandelbrot Set!", NULL, NULL);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -42,10 +42,10 @@ int main (void){
     
     {
         float points[] = {
-             0.5,  0.5, //0
-            -0.5,  0.5, //1
-            -0.5, -0.5, //2
-             0.5, -0.5, //3
+             1,  1, //0
+            -1,  1, //1
+            -1, -1, //2
+             1, -1, //3
         };
 
         float star[20];
@@ -60,9 +60,11 @@ int main (void){
             star[2*i+11] = sin(2*pi*i/5 + pi/5)/6;
         };
 
-        for(auto x:star)
-            std::cout<<x<<'\n';
-        
+        unsigned int ind[] = {
+            0, 1, 2,
+            3, 2, 0
+        };
+
         unsigned int indices[] = {
             9, 0, 5,
             5, 1, 6,
@@ -72,15 +74,16 @@ int main (void){
         };
         
         VertexArray myVAO;
-        VertexBuffer myVBO(star, sizeof(star));
+        //VertexBuffer myVBO(star, sizeof(star));
+        VertexBuffer Square(points, sizeof(points));
 
         VertexLayout layout;
         layout.Push<float>(2);
-        myVAO.AddBuffer(myVBO, layout);
+        myVAO.AddBuffer(Square, layout);
 
         myVAO.Bind();
         
-        IndexBuffer myIB(indices, 15);
+        IndexBuffer myIB(ind, 6);
 
         Shader shader("shader/vertex.shader", "shader/fragment.shader");
         shader.Bind();
@@ -95,7 +98,7 @@ int main (void){
 
             render.Clear();
 
-            shader.SetUniform4f("u_Color", r, .5f, r/3, 1.f);
+            shader.SetUniform2f("resolution", 600., 600.);
 
             render.Draw(myVAO, myIB, shader);
 

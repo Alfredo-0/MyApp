@@ -9,7 +9,6 @@ set( project_sources
     src/Shader.cpp
     src/VertexBuffer.cpp 
     src/VertexArray.cpp
-    #src/VertexLayout.hpp
 )
 
 add_executable(${PROJECT_NAME} ${project_sources})
