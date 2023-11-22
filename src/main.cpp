@@ -17,11 +17,42 @@
 #include <cmath>
 
 const double pi = std::acos(-1);
+const unsigned int WIDTH = 1280;
+const unsigned int HEIGHT = 720;
+float xPos, yPos;
+float zoom = 1.;
+float increment = .005f;
+
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
+    if (action == GLFW_RELEASE) 
+		return;
+
+	if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_X)
+		glfwSetWindowShouldClose(window, true);
+
+	else if (key == GLFW_KEY_LEFT)
+		xPos += 0.005;
+
+    else if (key == GLFW_KEY_RIGHT)
+		xPos += -0.005;
+
+    else if (key == GLFW_KEY_UP) 
+		yPos += -0.005;
+
+    else if (key == GLFW_KEY_DOWN) 
+		yPos += 0.005;
+
+    else if (key == GLFW_KEY_KP_ADD) 
+		zoom += 0.05;	
+
+    else if (key == GLFW_KEY_SPACE) 
+		zoom += -0.05;	        				
+}
 
 int main (void){
     glfwInit();
     
-    GLFWwindow* window = glfwCreateWindow(600, 600, "I'm a Mandelbrot Set!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Mandelbrot Set!", NULL, NULL);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -48,33 +79,12 @@ int main (void){
              1, -1, //3
         };
 
-        float star[20];
-
-        for(int i=0; i<5; ++i){
-            star[2*i] = cos(2*pi*i/5)/2;
-            star[2*i+1] = sin(2*pi*i/5)/2;
-        };
-
-        for(int i=0; i<5; ++i){
-            star[2*i+10] = cos(2*pi*i/5 + pi/5)/6;
-            star[2*i+11] = sin(2*pi*i/5 + pi/5)/6;
-        };
-
         unsigned int ind[] = {
             0, 1, 2,
             3, 2, 0
         };
-
-        unsigned int indices[] = {
-            9, 0, 5,
-            5, 1, 6,
-            6, 2, 7,
-            7, 3, 8,
-            8, 4, 9
-        };
         
         VertexArray myVAO;
-        //VertexBuffer myVBO(star, sizeof(star));
         VertexBuffer Square(points, sizeof(points));
 
         VertexLayout layout;
@@ -88,26 +98,26 @@ int main (void){
         Shader shader("shader/vertex.shader", "shader/fragment.shader");
         shader.Bind();
         
-        
-        float r = 0.;
-        float increment = .005f;
-
         Renderer render;
+        shader.SetUniform2f("resolution", (float)WIDTH, (float)HEIGHT);
+        
+        glfwSetKeyCallback(window, key_callback);
 
         while ( !glfwWindowShouldClose(window) ) {
 
             render.Clear();
 
-            shader.SetUniform2f("resolution", 600., 600.);
+            shader.SetUniform1f("zoom", zoom);
+            shader.SetUniform2f("position", xPos, yPos);
 
             render.Draw(myVAO, myIB, shader);
-
-            if( r > 1.0f)
+            /*
+            if( zoom > 10.0f)
                 increment = -0.005f;
-            else if ( r < 0.0f )
+            else if ( zoom < 1.0f )
                 increment = 0.005f;
-            r += increment;
-            
+            zoom += increment;
+            */
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

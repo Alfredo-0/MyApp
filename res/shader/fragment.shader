@@ -2,11 +2,14 @@
 layout(location = 0) out vec4 color;
 
 uniform vec2 resolution;
+uniform float zoom;
+uniform vec2 position;
 
-const float MAX_ITER = 128.0;
+const float MAX_ITER = 500.0;
 
 float mandelbrot(vec2 uv) {
-    vec2 c = 2.7 * uv - vec2(0.7, 0.0);
+    vec2 c = 4 * uv - vec2(0.7, 0.0);
+    c = c / pow(zoom, 4.0) - position;
     vec2 z = vec2(0.0);
     float iter = 0.0;
     for (float i; i < MAX_ITER; ++i){
@@ -17,13 +20,20 @@ float mandelbrot(vec2 uv) {
     }
     return 0.0;
 }
+vec3 hash13(float m) {
+    float x = fract(sin(m));
+    float y = fract(sin(m+x));
+    float z = fract(sin(m+y));
+    return vec3(x,y,z);
+}
+
 
 void main(){
     vec2 uv = (gl_FragCoord.xy - 0.5*resolution.xy) / resolution.y;
     vec3 col = vec3(0.0);
 
     float m = mandelbrot(uv);
-    col += m;
-    col = pow(col, vec3(0.45));
+    col += hash13(m);
+    col = pow(col, vec3(0.8));
     color = vec4(col, 1.0);
 };
