@@ -53,7 +53,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 int main (void){
     glfwInit();
     
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Modular Form Window!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Shofis Window!", NULL, NULL);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -74,10 +74,11 @@ int main (void){
     
     {
         float points[] = {
-            -1.0f, -1.0f, 0.0f, 0.0f, //0
-             1.0f, -1.0f, 1.0f, 0.0f, //1
-             1.0f,  1.0f, 1.0f, 1.0f, //2
-            -1.0f,  1.0f, 0.0f, 1.0f  //3
+        //  Coord         Textures    Colors
+            -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //0
+             0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //1
+             0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, //2
+            -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  //3
         };
 
         unsigned int ind[] = {
@@ -89,8 +90,10 @@ int main (void){
         VertexBuffer Square(points, sizeof(points));
 
         VertexLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
+        layout.Push<float>(2); //Coord
+        layout.Push<float>(2); //TexCoord
+        layout.Push<float>(3); //Colors
+
         myVAO.AddBuffer(Square, layout);
 
         myVAO.Bind();
@@ -103,7 +106,7 @@ int main (void){
         Renderer render;
         //shader.SetUniform2f("resolution", (float)WIDTH, (float)HEIGHT);
 
-        Texture texture("res/Textures/Modular_Form.png");
+        Texture texture("textures/texture.jpg");
         texture.Bind(0);
 
         shader.SetUniform1i("u_Texture", 0);

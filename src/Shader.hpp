@@ -68,18 +68,18 @@ private:
         }
 
         file.close();
-    return stream.str();
-}
+        return stream.str();
+    }
 
     unsigned int GetUniformLocation(const std::string& name){
-    if(m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
-        return m_UniformLocationCache[name];
+        if(m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
+            return m_UniformLocationCache[name];
 
-    int location = glGetUniformLocation(m_RendererID, name.c_str());
-    if (location == -1)
-        std::cout<< "Warning: uniform "<<name<<" does not exist\n"; 
-    m_UniformLocationCache[name] = location;
-    return (unsigned int)location;    
+        int location = glGetUniformLocation(m_RendererID, name.c_str());
+        if (location == -1)
+            std::cout<< "Warning: uniform "<<name<<" does not exist\n"; 
+        m_UniformLocationCache[name] = location;
+        return (unsigned int)location;    
     }
     
     unsigned int CompileShader(unsigned int type, const std::string& source){

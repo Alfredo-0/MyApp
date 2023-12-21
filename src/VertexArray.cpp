@@ -20,7 +20,7 @@ void VertexArray::AddBuffer(const VertexBuffer& myVBO, const VertexLayout& layou
     for (unsigned int i=0; i < elements.size(); i++){
         const auto& element = elements[i];
         glEnableVertexAttribArray(i);
-        glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.GetStride(), (const void*)offset);
+        glVertexAttribPointer(i, element.count, element.type, element.normalized, layout.GetStride(), (void*)(offset));
         offset += element.count * VElement::GetSizeOfType(element.type);
     }     
 }   
