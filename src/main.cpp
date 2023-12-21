@@ -53,7 +53,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 int main (void){
     glfwInit();
     
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Shofis Window!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Modular Form Window!", NULL, NULL);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -103,7 +103,7 @@ int main (void){
         Renderer render;
         //shader.SetUniform2f("resolution", (float)WIDTH, (float)HEIGHT);
 
-        Texture texture("res/Textures/Shofis.jpeg");
+        Texture texture("res/Textures/Modular_Form.png");
         texture.Bind(0);
 
         shader.SetUniform1i("u_Texture", 0);
