@@ -6,9 +6,11 @@ set( project_sources
     src/main.cpp
     src/Renderer.cpp
     src/IndexBuffer.cpp
-    src/Shader.cpp
     src/VertexBuffer.cpp 
     src/VertexArray.cpp
+    src/Texture.cpp
+    src/OBJLoader.cpp
+    src/vendor/stb_image/stb_image.cpp
 )
 
 add_executable(${PROJECT_NAME} ${project_sources})

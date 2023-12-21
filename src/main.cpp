@@ -12,13 +12,14 @@
 #include "VertexBuffer.hpp"
 #include "IndexBuffer.hpp"
 #include "VertexLayout.hpp"
+#include "Texture.hpp"
 
 #include <iostream>
 #include <cmath>
 
 const double pi = std::acos(-1);
-const unsigned int WIDTH = 1280;
-const unsigned int HEIGHT = 720;
+const unsigned int WIDTH = 500;
+const unsigned int HEIGHT = 500;
 float xPos, yPos;
 float zoom = 1.;
 float increment = .005f;
@@ -52,7 +53,7 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 int main (void){
     glfwInit();
     
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Mandelbrot Set!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Shofis Window!", NULL, NULL);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -73,10 +74,10 @@ int main (void){
     
     {
         float points[] = {
-             1,  1, //0
-            -1,  1, //1
-            -1, -1, //2
-             1, -1, //3
+            -1.0f, -1.0f, 0.0f, 0.0f, //0
+             1.0f, -1.0f, 1.0f, 0.0f, //1
+             1.0f,  1.0f, 1.0f, 1.0f, //2
+            -1.0f,  1.0f, 0.0f, 1.0f  //3
         };
 
         unsigned int ind[] = {
@@ -89,6 +90,7 @@ int main (void){
 
         VertexLayout layout;
         layout.Push<float>(2);
+        layout.Push<float>(2);
         myVAO.AddBuffer(Square, layout);
 
         myVAO.Bind();
@@ -99,16 +101,21 @@ int main (void){
         shader.Bind();
         
         Renderer render;
-        shader.SetUniform2f("resolution", (float)WIDTH, (float)HEIGHT);
-        
+        //shader.SetUniform2f("resolution", (float)WIDTH, (float)HEIGHT);
+
+        Texture texture("res/Textures/Shofis.jpeg");
+        texture.Bind(0);
+
+        shader.SetUniform1i("u_Texture", 0);
+
         glfwSetKeyCallback(window, key_callback);
 
         while ( !glfwWindowShouldClose(window) ) {
 
             render.Clear();
 
-            shader.SetUniform1f("zoom", zoom);
-            shader.SetUniform2f("position", xPos, yPos);
+            //shader.SetUniform1f("zoom", zoom);
+            //shader.SetUniform2f("position", xPos, yPos);
 
             render.Draw(myVAO, myIB, shader);
             /*

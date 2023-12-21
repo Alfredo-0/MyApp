@@ -3,8 +3,9 @@
 //  OpenGl
 //
 #pragma once
+#include "Shader.hpp"
 #include <vector>
-#include <GL/glew.h>
+
 
 struct VElement{
     unsigned int type;
