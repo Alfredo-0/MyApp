@@ -418,8 +418,7 @@ private:
 };
 
 
-class mat3f
-{
+class mat3f{
 public:
     float m[3][3];
 
