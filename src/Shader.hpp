@@ -9,6 +9,7 @@
 #include <unordered_map>
 #include <fstream>
 #include <sstream>
+#include "Math.hpp"
 #include <GL/glew.h>
 
 
@@ -51,6 +52,9 @@ public:
     }
     void SetUniform1i(const std:: string& name, int value){
         glUniform1i(GetUniformLocation(name), value);
+    }
+     void SetUniformMatrix4fv(const std:: string& name, mat4f mat){
+        glUniformMatrix4fv(GetUniformLocation(name), 1, GL_TRUE, &(mat.m[0][0]));
     }
 
 private:

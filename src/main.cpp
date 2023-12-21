@@ -13,11 +13,11 @@
 #include "IndexBuffer.hpp"
 #include "VertexLayout.hpp"
 #include "Texture.hpp"
+#include "Math.hpp"
 
 #include <iostream>
-#include <cmath>
 
-const double pi = std::acos(-1);
+
 const unsigned int WIDTH = 500;
 const unsigned int HEIGHT = 500;
 float xPos, yPos;
@@ -71,45 +71,61 @@ int main (void){
     glfwSwapInterval(1);
 
     glewInit();
+
+    glEnable(GL_DEPTH_TEST);
     
     {
         float points[] = {
-        //  Coord         Textures    Colors
-            -0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //0
-             0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //1
-             0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, //2
-            -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  //3
+            //Coord              //Textures  //Colors
+             0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //0
+             0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //1
+             0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, //2
+             0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  //3
+            -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //4
+            -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //5
+            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, //6
+            -0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  //7
         };
 
         unsigned int ind[] = {
-            0, 1, 2,
-            3, 2, 0
+          1, 5, 7, 3,
+          4, 3, 7, 8,
+          8, 7, 5, 6,
+          6, 2, 4, 8,
+          2, 1, 3, 4,
+          6, 5, 1, 2
         };
+
+        mat4f translation = {0.5, 0.0, 0.0, 0.0, 
+                             0.0, 0.5, 0.0, 0.0, 
+                             0.0, 0.0, 0.5, 0.0, 
+                             0.0, 0.0, 0.0, 1.0 
+                             };
         
+
         VertexArray myVAO;
         VertexBuffer Square(points, sizeof(points));
 
         VertexLayout layout;
-        layout.Push<float>(2); //Coord
+        layout.Push<float>(3); //Coord
         layout.Push<float>(2); //TexCoord
         layout.Push<float>(3); //Colors
 
         myVAO.AddBuffer(Square, layout);
-
         myVAO.Bind();
-        
-        IndexBuffer myIB(ind, 6);
+
+        IndexBuffer myIB(ind, 4*6);
 
         Shader shader("shader/vertex.shader", "shader/fragment.shader");
         shader.Bind();
         
         Renderer render;
-        //shader.SetUniform2f("resolution", (float)WIDTH, (float)HEIGHT);
 
         Texture texture("textures/texture.jpg");
         texture.Bind(0);
 
         shader.SetUniform1i("u_Texture", 0);
+        shader.SetUniformMatrix4fv("t", translation);
 
         glfwSetKeyCallback(window, key_callback);
 
@@ -117,8 +133,6 @@ int main (void){
 
             render.Clear();
 
-            //shader.SetUniform1f("zoom", zoom);
-            //shader.SetUniform2f("position", xPos, yPos);
 
             render.Draw(myVAO, myIB, shader);
             /*
