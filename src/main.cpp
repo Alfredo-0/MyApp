@@ -44,10 +44,10 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		yPos += 0.005;
 
     else if (key == GLFW_KEY_KP_ADD) 
-		zoom += -0.5;	
+		zoom += -1.0;	
 
     else if (key == GLFW_KEY_SPACE) 
-		zoom += 0.5;	        				
+		zoom += 1.0;	        				
 }
 
 int main (void){
@@ -73,6 +73,9 @@ int main (void){
     glewInit();
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_CULL_FACE);
+    glFrontFace(GL_CW);
+    glCullFace(GL_BACK);
     
     {
         float points[] = {
@@ -103,8 +106,26 @@ int main (void){
         };
         
         mat4f Mat;
-        Quaternion rot(zoom, {1.0, 1.0, 1.0}); 
+        Quaternion rot(zoom, {1.0, 0.0, 0.0}); 
         Mat.RotateT(rot);
+
+        mat4f t;
+        t.TranslationT(0.0, 0.0, 4.0);
+        mat4f y;
+        y.TranslationT(0.0, 1.0, 0.0);
+
+        float ar = (float)WIDTH / (float)HEIGHT;
+        float Near = 0.0f;
+        float Far = 10.0f;
+        float Range = Near - Far;
+
+        mat4f Proj(
+                    1/ar, 0.0f, 0.0f, 0.0f,
+                    0.0f, 1, 0.0f, 0.0f,
+                    0.0f, 0.0f, (Far+Near)/Range, 2.0*Far*Near/Range,
+                    0.0f, 0.0f, 1.0f, 0.0f
+        );
+
 
         VertexArray myVAO;
         VertexBuffer Square(points, sizeof(points));
@@ -138,9 +159,9 @@ int main (void){
 
             render.Draw(myVAO, myIB, shader);
 
-            Quaternion rot(zoom, {1.0, 1.0, 1.0}); 
+            Quaternion rot(zoom, {1.0, 1.0, 0.0}); 
             Mat.RotateT(rot);
-            shader.SetUniformMatrix4fv("t", Mat);
+            shader.SetUniformMatrix4fv("t", Proj*t*Mat*y*Mat);
 
             glfwSwapBuffers(window);
             glfwPollEvents();
