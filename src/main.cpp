@@ -44,16 +44,16 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 		yPos += 0.005;
 
     else if (key == GLFW_KEY_KP_ADD) 
-		zoom += 0.05;	
+		zoom += -0.5;	
 
     else if (key == GLFW_KEY_SPACE) 
-		zoom += -0.05;	        				
+		zoom += 0.5;	        				
 }
 
 int main (void){
     glfwInit();
     
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Shofis Window!", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "I'm a Window with a Cube!", NULL, NULL);
     
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -76,56 +76,59 @@ int main (void){
     
     {
         float points[] = {
-            //Coord              //Textures  //Colors
-             0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //0
-             0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //1
-             0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, //2
-             0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  //3
-            -0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, //4
-            -0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, 1.0f, 0.0f, //5
-            -0.5f,  0.5f,  0.5f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f, //6
-            -0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f  //7
+            //Coord              //Colors          //Textures
+             0.5f, -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, //0.0f, 0.0f, //0
+            -0.5f, -0.5f,  0.5f, 0.0f, 1.0f, 0.0f, //1.0f, 0.0f, //1
+             0.5f,  0.5f,  0.5f, 0.0f, 0.0f, 1.0f, //1.0f, 1.0f, //2
+            -0.5f,  0.5f,  0.5f, 1.0f, 0.0f, 0.0f, //0.0f, 1.0f, //3
+             0.5f, -0.5f, -0.5f, 1.0f, 0.0f, 0.0f, //0.0f, 0.0f, //4
+            -0.5f, -0.5f, -0.5f, 0.0f, 1.0f, 0.0f, //1.0f, 0.0f, //5
+             0.5f,  0.5f, -0.5f, 0.0f, 0.0f, 1.0f, //1.0f, 1.0f, //6
+            -0.5f,  0.5f, -0.5f, 1.0f, 0.0f, 0.0f  //,0.0f, 1.0f //7
         };
 
         unsigned int ind[] = {
-          1, 5, 7, 3,
-          4, 3, 7, 8,
-          8, 7, 5, 6,
-          6, 2, 4, 8,
-          2, 1, 3, 4,
-          6, 5, 1, 2
+          0, 2, 1,
+          1, 2, 3,
+          0, 4, 6,
+          0, 6, 2,
+          1, 4, 0,
+          1, 5, 4,
+          1, 3, 7,
+          1, 7, 5,
+          2, 6, 3,
+          3, 6, 7,
+          5, 6, 4,
+          5, 7, 6
         };
-
-        mat4f translation = {0.5, 0.0, 0.0, 0.0, 
-                             0.0, 0.5, 0.0, 0.0, 
-                             0.0, 0.0, 0.5, 0.0, 
-                             0.0, 0.0, 0.0, 1.0 
-                             };
         
+        mat4f Mat;
+        Quaternion rot(zoom, {1.0, 1.0, 1.0}); 
+        Mat.RotateT(rot);
 
         VertexArray myVAO;
         VertexBuffer Square(points, sizeof(points));
 
         VertexLayout layout;
         layout.Push<float>(3); //Coord
-        layout.Push<float>(2); //TexCoord
         layout.Push<float>(3); //Colors
+        //layout.Push<float>(2); //TexCoord
 
         myVAO.AddBuffer(Square, layout);
         myVAO.Bind();
 
-        IndexBuffer myIB(ind, 4*6);
+        IndexBuffer myIB(ind, 3*12);
 
         Shader shader("shader/vertex.shader", "shader/fragment.shader");
         shader.Bind();
         
         Renderer render;
 
-        Texture texture("textures/texture.jpg");
-        texture.Bind(0);
+        //Texture texture("textures/texture.jpg");
+        //texture.Bind(0);
 
-        shader.SetUniform1i("u_Texture", 0);
-        shader.SetUniformMatrix4fv("t", translation);
+        //shader.SetUniform1i("u_Texture", 0);
+        //shader.SetUniformMatrix4fv("t", translation);
 
         glfwSetKeyCallback(window, key_callback);
 
@@ -133,15 +136,12 @@ int main (void){
 
             render.Clear();
 
-
             render.Draw(myVAO, myIB, shader);
-            /*
-            if( zoom > 10.0f)
-                increment = -0.005f;
-            else if ( zoom < 1.0f )
-                increment = 0.005f;
-            zoom += increment;
-            */
+
+            Quaternion rot(zoom, {1.0, 1.0, 1.0}); 
+            Mat.RotateT(rot);
+            shader.SetUniformMatrix4fv("t", Mat);
+
             glfwSwapBuffers(window);
             glfwPollEvents();
         }

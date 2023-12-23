@@ -286,21 +286,45 @@ inline vec4f operator*(float f, const vec4f& l){
 struct Quaternion{
     float x, y, z, w;
 
-    Quaternion(float Angle, const vec3f& V);
+    Quaternion(float Angle, const vec3f& Vec){
 
-    Quaternion(float _x, float _y, float _z, float _w);
+        float Aux = sinf(ToRadian(Angle/2));
 
-    void Normalize(); //Complete
+        x = Vec.x * Aux;
+        y = Vec.y * Aux;
+        z = Vec.z * Aux;
+        w = cosf(ToRadian(Angle/2));
+    }
 
-    Quaternion Conjugate() const; //Complete
+    Quaternion(float _x, float _y, float _z, float _w){
+        x = _x;
+        y = _y;
+        z = _z;
+        w = _w;
+    }
 
-    vec3f ToDegrees(); //Complete
+    void Normalize(){
+        float len = sqrtf(x * x + y * y + z * z + w * w);
+
+        x /= len;
+        y /= len;
+        z /= len;
+        w /= len;
+    }
+
+    Quaternion Conjugate() const{
+        return {-x, -y, -z, w};
+    }
 };
 
-Quaternion operator*(const Quaternion& l, const Quaternion& r); //Complete
-
-Quaternion operator*(const Quaternion& q, const vec3f& v); //Complete
-
+/*
+Quaternion operator*(const Quaternion& l, const Quaternion& r){
+    return {(l.w * r.w) - (l.x * r.x) - (l.y * r.y) - (l.z * r.z),
+            (l.x * r.w) + (l.w * r.x) + (l.y * r.z) - (l.z * r.y),
+            (l.y * r.w) + (l.w * r.y) + (l.z * r.x) - (l.x * r.z),
+            (l.z * r.w) + (l.w * r.z) + (l.x * r.y) - (l.y * r.x)};
+}
+*/
 
 class mat4f{
 public:
@@ -387,34 +411,77 @@ public:
     float Determinant() const; //Complete
 
     mat4f Inverse() const; //Complete
-/*
-    void InitScaleTransform(float ScaleX, float ScaleY, float ScaleZ);
-    void InitScaleTransform(float Scale);
-    void InitScaleTransform(const vec3f& Scale);
 
-    void InitRotateTransform(float RotateX, float RotateY, float RotateZ);
-    void InitRotateTransformZYX(float RotateX, float RotateY, float RotateZ);
-    void InitRotateTransform(const vec3f& Rotate);
-    void InitRotateTransform(const Quaternion& quat);
+    void ScaleT(float ScaleX, float ScaleY, float ScaleZ){
+        m[0][0] = ScaleX; m[0][1] = 0.0f;   m[0][2] = 0.0f;   m[0][3] = 0.0f;
+        m[1][0] = 0.0f;   m[1][1] = ScaleY; m[1][2] = 0.0f;   m[1][3] = 0.0f;
+        m[2][0] = 0.0f;   m[2][1] = 0.0f;   m[2][2] = ScaleZ; m[2][3] = 0.0f;
+        m[3][0] = 0.0f;   m[3][1] = 0.0f;   m[3][2] = 0.0f;   m[3][3] = 1.0f;
+    }
 
-    void InitTranslationTransform(float x, float y, float z);
-    void InitTranslationTransform(const vec3f& Pos);
+    void ScaleT(float Scale){
+        ScaleT(Scale, Scale, Scale);
+    }
 
-    void InitCameraTransform(const vec3f& Target, const vec3f& Up);
+    void ScaleT(const vec3f& Scale){
+        ScaleT(Scale.x, Scale.y, Scale.z);
+    }
 
-    void InitCameraTransform(const vec3f& Pos, const vec3f& Target, const vec3f& Up);
+    void RotateT(Quaternion quat){
+        quat.Normalize();
+        float yy2 = 2.0f * quat.y * quat.y;
+        float xy2 = 2.0f * quat.x * quat.y;
+        float xz2 = 2.0f * quat.x * quat.z;
+        float yz2 = 2.0f * quat.y * quat.z;
+        float zz2 = 2.0f * quat.z * quat.z;
+        float wz2 = 2.0f * quat.w * quat.z;
+        float wy2 = 2.0f * quat.w * quat.y;
+        float wx2 = 2.0f * quat.w * quat.x;
+        float xx2 = 2.0f * quat.x * quat.x;
+        m[0][0] = - yy2 - zz2 + 1.0f;
+        m[0][1] = xy2 + wz2;
+        m[0][2] = xz2 - wy2;
+        m[0][3] = 0;
+        m[1][0] = xy2 - wz2;
+        m[1][1] = - xx2 - zz2 + 1.0f;
+        m[1][2] = yz2 + wx2;
+        m[1][3] = 0;
+        m[2][0] = xz2 + wy2;
+        m[2][1] = yz2 - wx2;
+        m[2][2] = - xx2 - yy2 + 1.0f;
+        m[2][3] = 0.0f;
+        m[3][0] = m[3][1] = m[3][2] = 0;
+        m[3][3] = 1.0f;
+    }
 
-    void InitPersProjTransform(const PersProjInfo& p);
+    void RotateT(const vec3f& Rotate);
 
-    void InitOrthoProjTransform(const OrthoProjInfo& p);
+    void TranslationT(float x, float y, float z){
+        m[0][0] = 1.0f; m[0][1] = 0.0f; m[0][2] = 0.0f; m[0][3] = x;
+        m[1][0] = 0.0f; m[1][1] = 1.0f; m[1][2] = 0.0f; m[1][3] = y;
+        m[2][0] = 0.0f; m[2][1] = 0.0f; m[2][2] = 1.0f; m[2][3] = z;
+        m[3][0] = 0.0f; m[3][1] = 0.0f; m[3][2] = 0.0f; m[3][3] = 1.0f;
+    }
 
-    void CalcClipPlanes(vec4f& l, vec4f& r, vec4f& b, vec4f& t, vec4f& n, vec4f& f) const;
+    void TranslationT(const vec3f& Pos){
+        TranslationT(Pos.x, Pos.y, Pos.z);
+    }
+
+    //void InitCameraTransform(const vec3f& Target, const vec3f& Up);
+
+    //void InitCameraTransform(const vec3f& Pos, const vec3f& Target, const vec3f& Up);
+
+    //void InitPersProjTransform(const PersProjInfo& p);
+
+    //void InitOrthoProjTransform(const OrthoProjInfo& p);
+
+    //void CalcClipPlanes(vec4f& l, vec4f& r, vec4f& b, vec4f& t, vec4f& n, vec4f& f) const;
 
 private:
     void InitRotationX(float RotateX);
     void InitRotationY(float RotateY);
     void InitRotationZ(float RotateZ);
-*/ //Complete
+ //Complete
 };
 
 
