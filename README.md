@@ -15,6 +15,6 @@ There are some resources online related to printing curves and surfaces, after r
 
 # Dec 23: 
 
-A rendered Cube that rotates using Quaternions is done. I implemented a simple structure to handle with 4x4 matrices and quaterions to create spatial rotations. Next time, I will try to render a textured Cube.
+A rendered Cube that rotates using Quaternions is done. I implemented a simple structure to handle with 4x4 matrices and quaterions to create spatial rotations. Next time, I will try to render a textured Cube with lighting effects.
 
 
