@@ -17,4 +17,6 @@ There are some resources online related to printing curves and surfaces, after r
 
 A rendered Cube that rotates using Quaternions is done. I implemented a simple structure to handle with 4x4 matrices and quaterions to create spatial rotations. Next time, I will try to render a textured Cube with lighting effects.
 
+# Dec 25:
 
+There is now a UI, it was implemented using the library ImGUI. It renders a cube and you can rotate given a vector and an angle. Also, there is a OBJloader header file, it waas able to load a torus created in Blender, it contains a few bugs that I need to check, it is related with the orientation of certain faces and using some textures. I have to read more about it... Next step after cleaning my code is to go to lighting and shading techniques. 
