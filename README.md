@@ -20,3 +20,5 @@ A rendered Cube that rotates using Quaternions is done. I implemented a simple s
 # Dec 25:
 
 There is now a UI, it was implemented using the library ImGUI. It renders a cube and you can rotate given a vector and an angle. Also, there is a OBJloader header file, it waas able to load a torus created in Blender, it contains a few bugs that I need to check, it is related with the orientation of certain faces and using some textures. I have to read more about it... Next step after cleaning my code is to go to lighting and shading techniques. 
+
+![Alt text](./Process.png)
