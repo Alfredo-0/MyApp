@@ -13,7 +13,6 @@
 #include <GL/glew.h>
 
 
-
 class Shader{
 private:
     unsigned int m_RendererID;

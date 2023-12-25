@@ -14,41 +14,18 @@
 #include "VertexLayout.hpp"
 #include "Texture.hpp"
 #include "Math.hpp"
+#include "OBJLoader.hpp"
+
+#include "vendor/imgui/imgui.h"
+#include "vendor/imgui/imgui_impl_glfw.h"
+#include "vendor/imgui/imgui_impl_opengl3.h"
 
 #include <iostream>
+#include <vector>
 
+const unsigned int WIDTH  = 600;
+const unsigned int HEIGHT = 600;
 
-const unsigned int WIDTH = 500;
-const unsigned int HEIGHT = 500;
-float xPos, yPos;
-float zoom = 1.;
-float increment = .005f;
-
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods){
-    if (action == GLFW_RELEASE) 
-		return;
-
-	if (key == GLFW_KEY_ESCAPE || key == GLFW_KEY_X)
-		glfwSetWindowShouldClose(window, true);
-
-	else if (key == GLFW_KEY_LEFT)
-		xPos += 0.005;
-
-    else if (key == GLFW_KEY_RIGHT)
-		xPos += -0.005;
-
-    else if (key == GLFW_KEY_UP) 
-		yPos += -0.005;
-
-    else if (key == GLFW_KEY_DOWN) 
-		yPos += 0.005;
-
-    else if (key == GLFW_KEY_KP_ADD) 
-		zoom += -1.0;	
-
-    else if (key == GLFW_KEY_SPACE) 
-		zoom += 1.0;	        				
-}
 
 int main (void){
     glfwInit();
@@ -71,12 +48,13 @@ int main (void){
     glfwSwapInterval(1);
 
     glewInit();
-
-    glEnable(GL_DEPTH_TEST);
+    
     glEnable(GL_CULL_FACE);
     glFrontFace(GL_CW);
     glCullFace(GL_BACK);
-    
+
+    glEnable(GL_DEPTH_TEST);
+
     {
         float points[] = {
             //Coord              //Colors          //Textures
@@ -104,9 +82,10 @@ int main (void){
           5, 6, 4,
           5, 7, 6
         };
-        
+
+
         mat4f Mat;
-        Quaternion rot(zoom, {1.0, 0.0, 0.0}); 
+        Quaternion rot(0.0, {0.0, 0.0, 0.0}); 
         Mat.RotateT(rot);
 
         mat4f t;
@@ -120,12 +99,11 @@ int main (void){
         float Range = Near - Far;
 
         mat4f Proj(
-                    1/ar, 0.0f, 0.0f, 0.0f,
-                    0.0f, 1, 0.0f, 0.0f,
+                    1/ar, 0.0f, 0.0f,             0.0f,
+                    0.0f, 1.0f, 0.0f,             0.0f,
                     0.0f, 0.0f, (Far+Near)/Range, 2.0*Far*Near/Range,
-                    0.0f, 0.0f, 1.0f, 0.0f
+                    0.0f, 0.0f, 1.0f,             0.0f
         );
-
 
         VertexArray myVAO;
         VertexBuffer Square(points, sizeof(points));
@@ -139,34 +117,84 @@ int main (void){
         myVAO.Bind();
 
         IndexBuffer myIB(ind, 3*12);
-
+        
         Shader shader("shader/vertex.shader", "shader/fragment.shader");
         shader.Bind();
-        
+
         Renderer render;
 
-        //Texture texture("textures/texture.jpg");
-        //texture.Bind(0);
+        // Setup Dear ImGui context
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 
-        //shader.SetUniform1i("u_Texture", 0);
-        //shader.SetUniformMatrix4fv("t", translation);
+        // Setup Platform/Renderer backends
+        ImGui_ImplGlfw_InitForOpenGL(window, true);          // Second param install_callback=true will install GLFW callbacks and chain to existing ones.
+        ImGui_ImplOpenGL3_Init();
 
-        glfwSetKeyCallback(window, key_callback);
+        bool show_demo_window = false;
+        bool show_another_window = true;
+        ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+        vec3f direction(0.0, 0.0, 0.0);
+        float angle = 0;
 
         while ( !glfwWindowShouldClose(window) ) {
-
+            
             render.Clear();
+            
+            // Start the Dear ImGui frame
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            if (show_demo_window)
+              ImGui::ShowDemoWindow(&show_demo_window);
 
             render.Draw(myVAO, myIB, shader);
 
-            Quaternion rot(zoom, {1.0, 1.0, 0.0}); 
+            
+            Quaternion rot(angle, direction); 
             Mat.RotateT(rot);
-            shader.SetUniformMatrix4fv("t", Proj*t*Mat*y*Mat);
+            shader.SetUniformMatrix4fv("t", Proj*t*Mat);
+            
+            {
+              static float f = 0.0f;
+              static int counter = 0;
 
-            glfwSwapBuffers(window);
+              ImGui::Begin("My first IU!");
+
+              ImGui::Text("Rotations");
+              //ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
+              //ImGui::Checkbox("Another Window", &show_another_window);
+
+              ImGui::SliderFloat("x Coordinate", &direction.x, 0.0f, 1.0f);
+              ImGui::SliderFloat("y Coordinate", &direction.y, 0.0f, 1.0f);
+              ImGui::SliderFloat("z Coordinate", &direction.z, 0.0f, 1.0f);
+              ImGui::SliderFloat("Angle", &angle, 0.0f, 360.0f);
+
+              ImGui::ColorEdit3("clear color", (float*)&clear_color);
+
+              if (ImGui::Button("Button"))
+                  counter++;
+              ImGui::SameLine();
+              ImGui::Text("counter = %d", counter);
+
+              ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+              ImGui::End();
+            }
+
+            ImGui::Render();
+        
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             glfwPollEvents();
+            glfwSwapBuffers(window);
         }
     }
+
+    ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
 
     glfwDestroyWindow(window);
     glfwTerminate();
