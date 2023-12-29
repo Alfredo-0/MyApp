@@ -2,25 +2,16 @@ cmake_minimum_required(VERSION 3.22.1)
 
 project(App0)
 
-set( project_sources
-    src/main.cpp
-    src/Renderer.cpp
-    src/IndexBuffer.cpp
-    src/VertexBuffer.cpp 
-    src/VertexArray.cpp
-    src/Texture.cpp
-    src/OBJLoader.cpp
-    src/vendor/stb_image/stb_image.cpp
-    src/vendor/imgui/imgui_demo.cpp
-    src/vendor/imgui/imgui_draw.cpp 
-    src/vendor/imgui/imgui_tables.cpp 
-    src/vendor/imgui/imgui_widgets.cpp 
-    src/vendor/imgui/imgui.cpp
-    src/vendor/imgui/imgui_impl_opengl3.cpp 
-    src/vendor/imgui/imgui_impl_glfw.cpp
+file(GLOB project_sources 
+    "src/*.cpp"
+    "src/vendor/stb_image/*.cpp"
+    "src/vendor/imgui/*.cpp"
+    "src/tests/*.cpp"
 )
 
 add_executable(${PROJECT_NAME} ${project_sources})
+
+target_sources(${PROJECT_NAME} PRIVATE ${project_headers})
 
 install(TARGETS ${PROJECT_NAME} DESTINATION bin)
 
