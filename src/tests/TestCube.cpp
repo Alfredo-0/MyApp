@@ -6,7 +6,7 @@
 #include "../VertexArray.hpp"
 #include "../VertexBuffer.hpp"
 #include "../VertexLayout.hpp"
-#include "../Texture.hpp"
+#include "../IndexBuffer.hpp"
 #include "../Shader.hpp"
 #include "../Math.hpp"
 #include "../Renderer.hpp"
@@ -77,9 +77,7 @@ namespace  test {
         m_Shader->Bind();
     }
 
-    void TestCube::OnUpdate(float deltaTime) {
-
-    }
+    void TestCube::OnUpdate(float deltaTime) {}
 
     void TestCube::OnRender() {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);

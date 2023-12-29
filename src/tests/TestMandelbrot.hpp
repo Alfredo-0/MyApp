@@ -1,28 +1,24 @@
 #pragma once
 
 #include "Test.hpp"
-#include "../VertexArray.hpp"
 #include "../VertexBuffer.hpp"
-#include "../VertexLayout.hpp"
-#include "../Shader.hpp"
 #include "../IndexBuffer.hpp"
-#include "../Math.hpp"
+#include "../VertexArray.hpp"
+#include "../Shader.hpp"
 
 #include <memory>
 
 namespace  test {
 
-    class TestCube : public Test{
+    class TestMandelbrot : public Test{
     public:
-        TestCube();
+        TestMandelbrot();
         
         void OnUpdate(float deltaTime) override;
         void OnRender() override;
         void OnImGuiRender() override;
     private:
-        vec3f m_Direction;
-        float m_Angle;
-        mat4f m_Rot, m_Trans, m_Proj; 
+        float m_WIDTH, m_HEIGHT, m_Zoom, m_xPos, m_yPos;
 
         std::unique_ptr<VertexArray> m_VAO; 
         std::unique_ptr<VertexBuffer> m_VBO;

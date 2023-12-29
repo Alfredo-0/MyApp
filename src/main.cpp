@@ -23,7 +23,7 @@
 #include "tests/Test.hpp"
 #include "tests/TestClearColor.hpp"
 #include "tests/TestCube.hpp"
-
+#include "tests/TestMandelbrot.hpp"
 
 #include <iostream>
 #include <vector>
@@ -85,6 +85,7 @@ int main (void){
 
       testMenu -> RegisterTest<test::TestClearColor>("Clear Color");
       testMenu -> RegisterTest<test::TestCube>("Cube");
+      testMenu -> RegisterTest<test::TestMandelbrot>("Mandelbrot");
 
 
       while ( !glfwWindowShouldClose(window) ) {  

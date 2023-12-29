@@ -1,10 +1,10 @@
+
 #version 330 core
 layout(location = 0) out vec4 color;
 
 uniform vec2 resolution;
 uniform float zoom;
 uniform vec2 position;
-uniform sampler2D u_Texture;
 
 const float MAX_ITER = 500.0;
 
@@ -37,4 +37,4 @@ void main(){
     col += hash13(m);
     col = pow(col, vec3(0.8));
     color = vec4(col, 1.0);
-};
+}
